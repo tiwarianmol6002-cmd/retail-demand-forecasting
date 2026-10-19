@@ -1,0 +1,17 @@
+name: Deploy and run on Databricks
+
+on:
+  workflow_dispatch:   # manual: the Kaggle data is static, so there is nothing to schedule
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    env:
+      DATABRICKS_HOST: ${{ secrets.DATABRICKS_HOST }}
+      DATABRICKS_TOKEN: ${{ secrets.DATABRICKS_TOKEN }}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: databricks/setup-cli@main
+      - run: databricks bundle validate -t dev
+      - run: databricks bundle deploy -t dev
+      - run: databricks bundle run demand_forecasting_job -t dev

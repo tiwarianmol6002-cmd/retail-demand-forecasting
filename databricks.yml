@@ -1,0 +1,31 @@
+bundle:
+  name: retail-demand-forecasting
+
+include:
+  - resources/*.yml
+
+variables:
+  catalog:
+    description: Unity Catalog catalog holding the bronze/silver/gold schemas
+    default: retail_forecasting
+  raw_base:
+    description: Volume folder that contains the Kaggle CSV files
+    default: /Volumes/retail_forecasting/bronze/raw_data
+  train_start:
+    description: First training date (a later start trains faster)
+    default: "2016-01-01"
+
+sync:
+  exclude:
+    - data/**
+    - outputs/**
+    - models/**
+    - mlruns/**
+    - mlflow.db
+    - tests/**
+
+targets:
+  dev:
+    default: true
+    mode: development
+    # Uses your default CLI profile (databricks auth login --host <url>).

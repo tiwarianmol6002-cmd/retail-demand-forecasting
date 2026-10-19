@@ -1,0 +1,18 @@
+.venv/
+__pycache__/
+*.pyc
+.DS_Store
+.env
+.pytest_cache/
+.databricks/
+.ipynb_checkpoints/
+
+# data and generated artifacts (never commit these)
+data/raw/*
+!data/raw/.gitkeep
+outputs/
+mlruns/
+mlflow.db
+models/*
+!models/.gitkeep
+*.log

@@ -1,0 +1,4 @@
+-r requirements.txt
+pytest>=8.0
+httpx>=0.27
+pyspark>=3.5   # local Spark for the Spark-vs-pandas parity tests (needs Java 11/17/21)

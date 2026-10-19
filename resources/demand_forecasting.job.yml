@@ -1,0 +1,67 @@
+resources:
+  jobs:
+    demand_forecasting_job:
+      name: retail-demand-forecasting
+      max_concurrent_runs: 1
+
+      tasks:
+        - task_key: setup
+          notebook_task:
+            notebook_path: ../databricks/00_setup.py
+            base_parameters:
+              catalog: ${var.catalog}
+
+        - task_key: bronze
+          depends_on:
+            - task_key: setup
+          notebook_task:
+            notebook_path: ../databricks/01_bronze.py
+            base_parameters:
+              catalog: ${var.catalog}
+              raw_base: ${var.raw_base}
+
+        - task_key: silver
+          depends_on:
+            - task_key: bronze
+          notebook_task:
+            notebook_path: ../databricks/02_silver.py
+            base_parameters:
+              catalog: ${var.catalog}
+
+        - task_key: features
+          depends_on:
+            - task_key: silver
+          notebook_task:
+            notebook_path: ../databricks/03_features.py
+            base_parameters:
+              catalog: ${var.catalog}
+
+        - task_key: quality_checks
+          depends_on:
+            - task_key: features
+          notebook_task:
+            notebook_path: ../databricks/04_quality_checks.py
+            base_parameters:
+              catalog: ${var.catalog}
+
+        - task_key: train_models
+          depends_on:
+            - task_key: quality_checks
+          timeout_seconds: 5400
+          notebook_task:
+            notebook_path: ../databricks/05_train_models.py
+            base_parameters:
+              catalog: ${var.catalog}
+              train_start: ${var.train_start}
+
+        - task_key: forecast
+          depends_on:
+            - task_key: train_models
+          notebook_task:
+            notebook_path: ../databricks/06_forecast.py
+            base_parameters:
+              catalog: ${var.catalog}
+
+      # email_notifications:
+      #   on_failure:
+      #     - you@example.com
