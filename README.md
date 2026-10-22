@@ -123,6 +123,11 @@ Chronological split: train up to 2017-05-31, validation 2017-06-01 to 2017-07-15
 * **Where it fails (test block):** the sparsest families (BOOKS, HOME APPLIANCES, BABY CARE) have the highest WAPE (1.25-2.62) but sell only 29-413 units in the month, so the percentage error comes from tiny denominators. The most costly weak spot by volume is SCHOOL AND OFFICE SUPPLIES (WAPE 0.45 on about 57,800 units, MAE 15.5), most likely seasonal (not verified).
 * Holiday rows are slightly harder (WAPE 0.156) than normal days (0.143) and promotion days (0.121); the holiday group is small (2,409 rows).
 
+## Pipeline run
+Successful Databricks job run (setup -> bronze -> silver -> features -> quality checks -> train models -> forecast):
+
+![Databricks job run](docs/job_run.png)
+
 ## Limitations (be upfront about these)
 
 * The dataset ends on 2017-08-15; the "next 7 days" are the 7 days after the last observed date, and Kaggle's true values for them are not public, so those forecasts cannot be scored. Accuracy is reported on the held-out last 31 days.
