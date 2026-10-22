@@ -128,6 +128,11 @@ Successful Databricks job run (setup -> bronze -> silver -> features -> quality 
 
 ![Databricks job run](docs/job_run.png)
 
+## Experiment tracking
+All runs are tracked in MLflow on Databricks. The champion (refit on all history) is registered in Unity Catalog:
+
+![MLflow run comparison](docs/mlflow_comparison.png)
+
 ## Limitations (be upfront about these)
 
 * The dataset ends on 2017-08-15; the "next 7 days" are the 7 days after the last observed date, and Kaggle's true values for them are not public, so those forecasts cannot be scored. Accuracy is reported on the held-out last 31 days.
