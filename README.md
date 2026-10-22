@@ -134,7 +134,7 @@ All runs are tracked in MLflow on Databricks. The champion (refit on all history
 ![MLflow run comparison](docs/mlflow_comparison.png)
 
 ## API
-The champion model is served with FastAPI. Example `POST /predict` call (illustrative input values; the real 7-day forecasts are in `forecasts.csv`):
+The champion model is served with FastAPI. Example `POST /predict` call for store 1, BEVERAGES on 2017-08-16, using real feature values (the result matches the batch forecast). The lagged transactions and oil fields are required, because leaving them out changed the prediction by about 20% in testing. The stored 7-day forecasts are in `forecasts.csv`:
 
 ![FastAPI predict endpoint](docs/api_predict.png)
 

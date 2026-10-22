@@ -55,9 +55,10 @@ app = FastAPI(title="Retail Demand Forecasting API", version="1.0.0", lifespan=l
 
 class PredictRequest(BaseModel):
     model_config = ConfigDict(json_schema_extra={"example": {
-        "date": "2017-08-16", "store_nbr": 1, "family": "BEVERAGES", "lag_1": 108, "lag_7": 120, "lag_14": 112,
-        "lag_28": 115, "rolling_mean_7": 113.4, "rolling_mean_14": 112.0, "rolling_mean_28": 109.7,
-        "rolling_std_7": 9.5, "rolling_std_28": 11.2, "onpromotion": 12,
+        "date": "2017-08-16", "store_nbr": 1, "family": "BEVERAGES", "lag_1": 1942, "lag_7": 2311, "lag_14": 2645,
+        "lag_28": 2369, "rolling_mean_7": 1757.0, "rolling_mean_14": 1930.36, "rolling_mean_28": 2041.18,
+        "rolling_std_7": 633.3, "rolling_std_28": 550.5, "onpromotion": 20,
+        "transactions_lag_7": 1766, "transactions_roll_mean_28": 1540.43, "oil_price_lag_7": 49.59,
         "city": "Quito", "state": "Pichincha", "store_type": "D", "cluster": 13}})
 
     date: date
@@ -73,9 +74,9 @@ class PredictRequest(BaseModel):
     rolling_std_7: float | None = Field(default=None, ge=0)
     rolling_std_28: float | None = Field(default=None, ge=0)
     onpromotion: float = Field(default=0, ge=0)
-    transactions_lag_7: float | None = None
-    transactions_roll_mean_28: float | None = None
-    oil_price_lag_7: float | None = None
+    transactions_lag_7: float = Field(ge=0)
+    transactions_roll_mean_28: float = Field(ge=0)
+    oil_price_lag_7: float = Field(ge=0)
     is_holiday: int = Field(default=0, ge=0, le=1)
     is_national_holiday: int = Field(default=0, ge=0, le=1)
     is_regional_holiday: int = Field(default=0, ge=0, le=1)
