@@ -54,7 +54,7 @@ Dockerfile             API image       .github/workflows/  CI + manual Databrick
 ```bash
 python3 -m venv .venv && source .venv/bin/activate
 pip install -r requirements-dev.txt
-pytest -q                                   # all tests (Spark tests need Java; they skip without it)
+pytest -q                                   # all tests (Spark parity tests need Java 17; on macOS XGBoost also needs `brew install libomp`)
 make demo                                   # synthetic data -> features -> train -> compare -> forecast
 mlflow ui --backend-store-uri sqlite:///mlflow.db     # open http://127.0.0.1:5000 to compare runs
 make api                                    # http://127.0.0.1:8000/docs
@@ -145,10 +145,3 @@ The champion model is served with FastAPI. Example `POST /predict` call (illustr
 * Store-level aggregates only (no item-level data, no prices, no stock-outs); zero-inflated families are hard to forecast.
 * Free Edition cannot read S3 directly, so the CSVs are uploaded to a Databricks volume and S3 is the raw archive.
 * Possible extensions: rolling-origin cross-validation, quantile forecasts / prediction intervals, drift monitoring, a dashboard.
-
-## Resume bullets (use only after you have run it and filled in the results)
-
-* Built an end-to-end retail demand forecasting pipeline on Databricks (PySpark, Delta Lake) combining sales, store, transaction, oil-price and per-store holiday data into a Bronze/Silver/Gold lakehouse with automated data-quality gates.
-* Engineered leakage-safe time-series features (lags, rolling statistics, calendar and horizon-lagged covariates) and verified the Spark and pandas implementations produce identical values with automated tests.
-* Compared naive baselines with Ridge, Random Forest, XGBoost and LightGBM using chronological validation and WAPE / MAE / RMSE, tracking every run in MLflow and registering the champion model in Unity Catalog.
-* Generated 7-day recursive forecasts and served the model through a Dockerised FastAPI service with input validation and automated tests.
