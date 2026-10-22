@@ -127,7 +127,7 @@ def test_api_predict_and_health(experiment, tmp_path, monkeypatch):
     importlib.reload(api_main)
     payload = {"date": "2017-08-16", "store_nbr": 1, "family": "BEVERAGES", "lag_1": 30, "lag_7": 31, "lag_14": 29,
                "lag_28": 32, "rolling_mean_7": 30, "rolling_mean_14": 30, "rolling_mean_28": 30,
-               "onpromotion": 3, "transactions_lag_7": 1500, "transactions_roll_mean_28": 1500, "oil_price_lag_7": 50, "city": "Quito", "state": "Pichincha", "store_type": "A", "cluster": 1}
+               "onpromotion": 3, "rolling_std_7": 2, "rolling_std_28": 2, "transactions_lag_7": 1500, "transactions_roll_mean_28": 1500, "oil_price_lag_7": 50, "city": "Quito", "state": "Pichincha", "store_type": "A", "cluster": 1}
     with TestClient(api_main.app) as client:
         h = client.get("/health").json()
         assert h["status"] == "ok" and h["model_loaded"] is True
@@ -137,6 +137,8 @@ def test_api_predict_and_health(experiment, tmp_path, monkeypatch):
         assert bad.status_code == 422
         missing = {k: v for k, v in payload.items() if k != "transactions_lag_7"}
         assert client.post("/predict", json=missing).status_code == 422   # required field
+        no_std = {k: v for k, v in payload.items() if k != "rolling_std_7"}
+        assert client.post("/predict", json=no_std).status_code == 422   # required field
         assert client.get("/forecasts").status_code == 404           # no forecast file in tmp
 
 
@@ -150,5 +152,5 @@ def test_api_without_model_returns_503(tmp_path, monkeypatch):
         assert client.get("/health").json()["model_loaded"] is False
         r = client.post("/predict", json={"date": "2017-08-16", "store_nbr": 1, "family": "X", "lag_1": 1, "lag_7": 1,
                                           "lag_14": 1, "lag_28": 1, "rolling_mean_7": 1, "rolling_mean_14": 1,
-                                          "rolling_mean_28": 1, "transactions_lag_7": 1, "transactions_roll_mean_28": 1, "oil_price_lag_7": 1})
+                                          "rolling_mean_28": 1, "rolling_std_7": 1, "rolling_std_28": 1, "transactions_lag_7": 1, "transactions_roll_mean_28": 1, "oil_price_lag_7": 1})
         assert r.status_code == 503
