@@ -117,9 +117,9 @@ Chronological split: train up to 2017-05-31, validation 2017-06-01 to 2017-07-15
 | LightGBM (63 leaves) | 0.1158 | 0.1235 | 58.30 | 206.72 |
 
 **Findings**
-* The champion (chosen on validation WAPE) has a test WAPE about **31% lower** than the best baseline (0.1243 vs 0.1792).
+* The champion (chosen on validation WAPE) has a test WAPE about **31% lower** than the best baseline (0.1243 vs 0.1792). The served model was refit on all history afterwards, including the test block, so 0.1243 is the score of the pre-refit model and the refit model has no held-out score of its own.
 * The tree-based models perform almost identically; random forest and LightGBM are marginally ahead on test (0.1235), a difference within noise.
-* Ridge fails (WAPE 0.58): a linear model on raw, heavily skewed lag features produces a few very large misses. Log-scaling the lag features would be the fix.
+* Ridge fails (test WAPE 0.52): a linear model on raw, heavily skewed lag features produces a few very large misses. Log-scaling the lag features would be the fix.
 * **Where it fails (test block):** the sparsest families (BOOKS, HOME APPLIANCES, BABY CARE) have the highest WAPE (1.25-2.62) but sell only 29-413 units in the month, so the percentage error comes from tiny denominators. The most costly weak spot by volume is SCHOOL AND OFFICE SUPPLIES (WAPE 0.45 on about 57,800 units, MAE 15.5), most likely seasonal (not verified).
 * Holiday rows are slightly harder (WAPE 0.156) than normal days (0.143) and promotion days (0.121); the holiday group is small (2,409 rows).
 
