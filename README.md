@@ -100,19 +100,28 @@ Use the **same scikit-learn / xgboost / lightgbm versions** locally as on Databr
 
 Optional AWS deployment: run the Docker image on a small EC2 instance and `docker run` it there. Check the current AWS free-tier / credit terms first and stop the instance when you are not using it.
 
-## 5. Results (fill in from YOUR run)
+## 5. Results (full Databricks run on the Kaggle Store Sales data)
+
+Chronological split: train up to 2017-05-31, validation 2017-06-01 to 2017-07-15 (used to select the model), test 2017-07-16 to 2017-08-15 (final hold-out, never used to choose a model). Training window starts 2016-01-01.
 
 | Model | Val WAPE | Test WAPE | Test MAE | Test RMSE |
 |---|---|---|---|---|
-| Naive (yesterday) | | | | |
-| Same weekday last week | | | | |
-| 7-day rolling mean | | | | |
-| Ridge | | | | |
-| Random Forest | | | | |
-| XGBoost | | | | |
-| LightGBM | | | | |
+| Naive (yesterday) | 0.2759 | 0.2459 | 116.11 | 399.97 |
+| Same weekday last week | 0.1869 | 0.1792 | 84.63 | 310.16 |
+| 7-day rolling mean | 0.2406 | 0.2058 | 97.16 | 335.01 |
+| Ridge | 0.5769 | 0.5159 | 243.60 | 1704.36 |
+| Random Forest (300k-row sample) | 0.1155 | 0.1235 | 58.34 | 209.24 |
+| XGBoost (depth 6) | 0.1174 | 0.1248 | 58.94 | 210.33 |
+| **XGBoost (depth 8) - champion** | **0.1138** | **0.1243** | **58.71** | **211.33** |
+| LightGBM (31 leaves) | 0.1204 | 0.1247 | 58.88 | 207.31 |
+| LightGBM (63 leaves) | 0.1158 | 0.1235 | 58.30 | 206.72 |
 
-Copy the numbers from `gold.model_comparison` (or `outputs/model_comparison.csv`), add the MLflow comparison screenshot and the top features, and write 3–4 sentences about where the model fails (holidays? promotions? sparse families?).
+**Findings**
+* The champion (chosen on validation WAPE) has a test WAPE about **31% lower** than the best baseline (0.1243 vs 0.1792).
+* The tree-based models perform almost identically; random forest and LightGBM are marginally ahead on test (0.1235), a difference within noise.
+* Ridge fails (WAPE 0.58): a linear model on raw, heavily skewed lag features produces a few very large misses. Log-scaling the lag features would be the fix.
+* **Where it fails (test block):** the sparsest families (BOOKS, HOME APPLIANCES, BABY CARE) have the highest WAPE (1.25-2.62) but sell only 29-413 units in the month, so the percentage error comes from tiny denominators. The most costly weak spot by volume is SCHOOL AND OFFICE SUPPLIES (WAPE 0.45 on about 57,800 units, MAE 15.5), most likely seasonal (not verified).
+* Holiday rows are slightly harder (WAPE 0.156) than normal days (0.143) and promotion days (0.121); the holiday group is small (2,409 rows).
 
 ## Limitations (be upfront about these)
 
