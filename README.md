@@ -133,6 +133,11 @@ All runs are tracked in MLflow on Databricks. The champion (refit on all history
 
 ![MLflow run comparison](docs/mlflow_comparison.png)
 
+## API
+The champion model is served with FastAPI. Example `POST /predict` call (illustrative input values; the real 7-day forecasts are in `forecasts.csv`):
+
+![FastAPI predict endpoint](docs/api_predict.png)
+
 ## Limitations (be upfront about these)
 
 * The dataset ends on 2017-08-15; the "next 7 days" are the 7 days after the last observed date, and Kaggle's true values for them are not public, so those forecasts cannot be scored. Accuracy is reported on the held-out last 31 days.
